@@ -2,11 +2,8 @@
 
 # Criando relatórios personalizados em PDF com IText em sua aplicação Java
 
-Nessa aula aprenderemos:
-- Enviar e-mails utilizando o Java Mail Sender
-- Configurar o Gmail na aplicação
-- Enviar um email com uma simples mensagem de texto
-- Enviar um email com um template personalizado e dinâmico
+Nessa aula aprenderemos a construir um relatório personalizado em PDF, utilizando o iText 7, e disponibilizá-lo através de
+uma requisição HTTP.
 
 ## Tecnologias
 
@@ -32,6 +29,30 @@ Nessa aula aprenderemos:
     ````
     implementation 'com.itextpdf:itext7-core:7.1.16'
     ````
+
+## Endpoints da aplicação
+
+- Listar todos os alunos da base
+  ````
+  curl --location --request GET 'localhost:8080/students'
+  ````
+
+- Cadastrar um novo aluno na base
+  ````
+  curl --location --request POST 'localhost:8080/students' \
+  --header 'Content-Type: application/json' \
+  --data-raw '{
+      "name": "Fuskinha",
+      "email": "fuskinha@gmail.com",
+      "password": "123456",
+      "birthday": "1992-08-28"
+  }'
+  ````
+
+- Gerar relatório PDF com a listagem dos alunos da base
+  ````
+  curl --location --request GET 'localhost:8080/students/report'
+  ````
 
 ### Para testar todos os recursos da aplicação, utilize a collection do Postman abaixo:
 
