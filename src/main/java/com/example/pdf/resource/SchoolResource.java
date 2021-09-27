@@ -1,8 +1,8 @@
 package com.example.pdf.resource;
 
-import com.example.pdf.model.Student;
-import com.example.pdf.repository.StudentRepository;
-import com.example.pdf.service.StudentService;
+import com.example.pdf.model.School;
+import com.example.pdf.repository.SchoolRepository;
+import com.example.pdf.service.SchoolService;
 import lombok.AllArgsConstructor;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
@@ -17,15 +17,15 @@ import java.util.List;
 
 @RestController
 @AllArgsConstructor
-@RequestMapping("/students")
-public class StudentResource {
+@RequestMapping("/schools")
+public class SchoolResource {
 
-    private StudentService studentService;
-    private StudentRepository studentRepository;
+    private SchoolService schoolService;
+    private SchoolRepository schoolRepository;
 
     @GetMapping
-    public List<Student> findAll() {
-        return this.studentRepository.findAll();
+    public List<School> findAll() {
+        return this.schoolRepository.findAll();
     }
 
     @GetMapping("/report")
@@ -37,7 +37,7 @@ public class StudentResource {
             return ResponseEntity.ok()
                     .headers(headers)
                     .contentType(MediaType.APPLICATION_PDF)
-                    .body(new InputStreamResource(this.studentService.report().getByteArrayInputStream()));
+                    .body(new InputStreamResource(this.schoolService.report().getByteArrayInputStream()));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
