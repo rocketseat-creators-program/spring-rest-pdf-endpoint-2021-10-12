@@ -32,28 +32,28 @@ uma requisição HTTP.
 
 ## Endpoints da aplicação
 
-- Listar todos os alunos da base
+### Endpoints de Alunos (Students)
+- Listar todos os alunos cadastrados na base
   ````
   curl --location --request GET 'localhost:8080/students'
   ````
 
-- Cadastrar um novo aluno na base
-  ````
-  curl --location --request POST 'localhost:8080/students' \
-  --header 'Content-Type: application/json' \
-  --data-raw '{
-      "name": "Fuskinha",
-      "email": "fuskinha@gmail.com",
-      "password": "123456",
-      "birthday": "1992-08-28"
-  }'
-  ````
-
-- Gerar relatório PDF com a listagem dos alunos da base
+- Gerar relatório PDF com a listagem dos alunos e suas respectivas idades
   ````
   curl --location --request GET 'localhost:8080/students/report'
   ````
 
+### Endpoints de Escolas (Schools)
+- Listar todos as escolas cadastradas na base
+  ````
+  curl --location --request GET 'localhost:8080/schools'
+  ````
+
+- Gerar relatório PDF com a listagem das escolas e suas respectivas quantidades de alunos
+  ````
+  curl --location --request GET 'localhost:8080/schools/report'
+  ````
+  
 ### Para testar todos os recursos da aplicação, utilize a collection do Postman abaixo:
 
 - [Postman Collection](https://www.getpostman.com/collections/b46cab8571197072c555)
