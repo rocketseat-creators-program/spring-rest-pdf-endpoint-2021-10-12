@@ -1,17 +1,18 @@
 package com.example.pdf.service;
 
-import com.example.pdf.report.CustomReport;
-import com.example.pdf.report.CustomText;
 import com.example.pdf.repository.SchoolRepository;
 import com.example.pdf.repository.StudentRepository;
 import com.example.pdf.util.DateUtils;
+import com.example.pdf.util.ReportUtils;
 import com.itextpdf.io.font.constants.StandardFonts;
+import com.itextpdf.kernel.font.PdfFontFactory;
+import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.property.TextAlignment;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 
 @Service
 @AllArgsConstructor
@@ -20,33 +21,35 @@ public class SchoolService {
     private SchoolRepository schoolRepository;
     private StudentRepository studentRepository;
 
-    public CustomReport report() {
-        CustomReport customReport = new CustomReport();
+    public ByteArrayInputStream report() throws IOException {
+        ReportUtils report = ReportUtils.getInstance();
 
-        customReport.addParagraph(CustomText.builder()
-                .fontSize(28f)
-                .value("Schools List")
-                .font(StandardFonts.COURIER_BOLD)
-                .textAlignment(TextAlignment.CENTER)
-                .build());
+        report.addParagraph(new Paragraph("Schools List")
+                .setFontSize(28)
+                .setTextAlignment(TextAlignment.CENTER)
+                .setFont(PdfFontFactory.createFont(StandardFonts.COURIER_BOLD))
+        );
 
-        customReport.addNewLine();
-        customReport.openTable(3);
-        customReport.addTableHeaders("NAME", "STUDENTS", "CREATED AT");
+        report.addNewLine();
+        report.openTable(3);
+        report.addTableHeader("NAME", "STUDENTS", "CREATED AT");
 
-        this.schoolRepository.findAll().forEach(school -> {
-            List<Object> rowColumns = new ArrayList();
-            rowColumns.add(school.getName());
-            rowColumns.add(this.studentRepository.countBySchool(school));
-            rowColumns.add(DateUtils.format(school.getCreatedAt(), "dd/MM/yyyy HH:mm"));
+        int totalStudents = this.schoolRepository.findAll().stream().map(school -> {
+            int studentsCount = this.studentRepository.countBySchool(school);
 
-            customReport.addTableRow(rowColumns);
-        });
+            report.addTableColumn(school.getName());
+            report.addTableColumn(studentsCount);
+            report.addTableColumn(DateUtils.format(school.getCreatedAt(), "dd/MM/yyyy HH:mm"));
 
-        customReport.closeTable();
-        customReport.closeDocument();
+            return studentsCount;
+        }).mapToInt(Integer::valueOf).sum();
 
-        return customReport;
+        report.addTableFooter(null, totalStudents, null);
+
+        report.closeTable();
+        report.closeDocument();
+
+        return report.getByteArrayInputStream();
     }
 
 }
