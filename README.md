@@ -1,6 +1,6 @@
 <img src="https://storage.googleapis.com/golden-wind/experts-club/capa-github.svg" />
 
-# Criando relatórios personalizados em PDF com IText em sua aplicação Java
+# Criando relatórios personalizados em PDF com IText 7 em sua aplicação Java
 
 Nessa aula aprenderemos a construir um relatório personalizado em PDF, utilizando o iText 7, e disponibilizá-lo através de
 uma requisição HTTP.
