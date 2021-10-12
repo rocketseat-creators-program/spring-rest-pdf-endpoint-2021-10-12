@@ -5,6 +5,7 @@
 Nessa aula aprenderemos a construir um relatório personalizado em PDF, utilizando o iText 7, e disponibilizá-lo através de
 uma requisição HTTP.
 
+- [Template utilizado na aula](https://github.com/rocketseat-experts-club/angular-http-requests-2021-10-11/tree/template)
 ## Tecnologias
 
 - [Spring Boot](https://spring.io/projects/spring-boot)
