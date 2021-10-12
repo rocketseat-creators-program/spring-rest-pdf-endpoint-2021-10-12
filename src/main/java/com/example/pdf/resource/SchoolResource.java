@@ -39,7 +39,6 @@ public class SchoolResource {
                     .contentType(MediaType.APPLICATION_PDF)
                     .body(new InputStreamResource(this.schoolService.report()));
         } catch (Exception e) {
-            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }

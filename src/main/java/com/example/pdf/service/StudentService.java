@@ -12,7 +12,6 @@ import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
-import com.itextpdf.layout.element.Text;
 import com.itextpdf.layout.property.TextAlignment;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -32,37 +31,42 @@ public class StudentService {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(baos));
-        pdfDocument.setDefaultPageSize(PageSize.Default.rotate());
+        pdfDocument.setDefaultPageSize(PageSize.A4.rotate());
 
         Document document = new Document(pdfDocument);
 
-        Text textTitle = new Text("Students List");
-        textTitle.setFontSize(28);
-        textTitle.setFont(PdfFontFactory.createFont(StandardFonts.COURIER_BOLD));
-
-        Paragraph title = new Paragraph(textTitle);
-        title.setTextAlignment(TextAlignment.CENTER);
+        Paragraph title = new Paragraph("Students List")
+                .setFontSize(28)
+                .setFont(PdfFontFactory.createFont(StandardFonts.COURIER_BOLD))
+                .setTextAlignment(TextAlignment.CENTER);
 
         document.add(title);
         document.add(new Paragraph("\n"));
 
-        Table table = new Table(5);
-        table.useAllAvailableWidth();
-        table.setTextAlignment(TextAlignment.CENTER);
+        Table table = new Table(6)
+                .useAllAvailableWidth()
+                .setTextAlignment(TextAlignment.CENTER);
 
         table.addHeaderCell("NAME");
         table.addHeaderCell("EMAIL");
         table.addHeaderCell("AGE");
         table.addHeaderCell("BIRTHDAY");
+        table.addHeaderCell("SCHOOL");
         table.addHeaderCell("CREATED AT");
 
-        this.studentRepository.findAll().forEach(student -> {
-            table.addCell(student.getName());
-            table.addCell(student.getEmail());
-            table.addCell(String.valueOf(DateUtils.age(student.getBirthday())));
-            table.addCell(DateUtils.format(student.getBirthday(), "dd/MM/yyyy"));
-            table.addCell(DateUtils.format(student.getCreatedAt(), "dd/MM/yyyy HH:mm"));
-        });
+        this.studentRepository.findAll()
+                .stream()
+                .sorted(Comparator
+                        .comparing((Student s) -> s.getSchool().getName())
+                        .thenComparing(Student::getName))
+                .forEach(student -> {
+                    table.addCell(student.getName());
+                    table.addCell(student.getEmail());
+                    table.addCell(String.valueOf(DateUtils.age(student.getBirthday())));
+                    table.addCell(DateUtils.format(student.getBirthday(), "dd/MM/yyyy"));
+                    table.addCell(student.getSchool().getName());
+                    table.addCell(DateUtils.format(student.getCreatedAt(), "dd/MM/yyyy HH:mm"));
+                });
 
         document.add(table);
         document.close();
@@ -72,7 +76,7 @@ public class StudentService {
 
     public ByteArrayInputStream reportV2() throws IOException {
         ReportUtils report = ReportUtils.getInstance();
-        report.setPageSize(PageSize.Default.rotate());
+        report.setPageSize(PageSize.A4.rotate());
 
         report.addParagraph(new Paragraph("Students List")
                 .setFontSize(28)
@@ -81,17 +85,20 @@ public class StudentService {
         );
 
         report.addNewLine();
-        report.openTable(5);
-        report.addTableHeader("NAME", "EMAIL", "AGE", "BIRTHDAY", "CREATED AT");
+        report.openTable(6);
+        report.addTableHeader("NAME", "EMAIL", "AGE", "BIRTHDAY", "SCHOOL", "CREATED AT");
 
         this.studentRepository.findAll()
                 .stream()
-                .sorted(Comparator.comparing(Student::getName))
+                .sorted(Comparator
+                        .comparing((Student s) -> s.getSchool().getName())
+                        .thenComparing(Student::getName))
                 .forEach(student -> {
                     report.addTableColumn(student.getName());
                     report.addTableColumn(student.getEmail());
                     report.addTableColumn(DateUtils.age(student.getBirthday()));
                     report.addTableColumn(DateUtils.format(student.getBirthday(), "dd/MM/yyyy"));
+                    report.addTableColumn(student.getSchool().getName());
                     report.addTableColumn(DateUtils.format(student.getCreatedAt(), "dd/MM/yyyy HH:mm"));
                 });
 

@@ -37,9 +37,8 @@ public class StudentResource {
             return ResponseEntity.ok()
                     .headers(headers)
                     .contentType(MediaType.APPLICATION_PDF)
-                    .body(new InputStreamResource(this.studentService.reportV2()));
+                    .body(new InputStreamResource(this.studentService.reportV1()));
         } catch (Exception e) {
-            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
